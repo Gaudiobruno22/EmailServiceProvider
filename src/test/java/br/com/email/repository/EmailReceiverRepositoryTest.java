@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import br.com.email.builder.EmailReceiverBuilder;
+import br.com.email.helper.EmailValidator;
 import br.com.email.model.EmailReceiver;
 
 @DataJpaTest
