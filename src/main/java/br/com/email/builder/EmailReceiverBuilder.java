@@ -11,6 +11,7 @@ public class EmailReceiverBuilder {
 	
 	public static EmailReceiver build() {
 		return EmailReceiver.builder().subject("Assunto de Teste")
+						.id(2L)
 						.mailBody("Olá, meu Nome é Bruno. Este é um Corpo de E-mail Teste.")
 						.origin("brunogmattos22@gmail.com")
 						.destiny("brunogmattos22@gmail.com")
