@@ -33,8 +33,10 @@ public class EmailReceiverService {
 	
 	public void sendEmail(Long codigo) {
 		EmailReceiver emailReceiver = new EmailReceiver();
+		logger.info("Iniciando envio do E-mail... " + emailReceiver.getId());
 		emailReceiver = searchEmail(codigo);
 		try {
+			
 			if(emailReceiver != null) {
 				MimeMessage message = createMessage(emailReceiver);
 				mailSender.send(message);
