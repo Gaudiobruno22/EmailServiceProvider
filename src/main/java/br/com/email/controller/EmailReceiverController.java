@@ -17,9 +17,12 @@ import br.com.email.exception.EmailNotFoundException;
 import br.com.email.model.EmailReceiver;
 import br.com.email.response.EmailResponse;
 import br.com.email.service.EmailReceiverService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 @RestController
 @RequestMapping(value = "/api/v1/mail")
+@Api(description = "EndPoint Serviço Web Envio de E-mail.", tags = "Email Sender Service")
 public class EmailReceiverController {
 
 	@Autowired
@@ -27,6 +30,7 @@ public class EmailReceiverController {
 	
 	private static final Logger logger = LoggerFactory.getLogger(EmailReceiverController.class);
 	
+	@ApiOperation(value = "EndPoint Principal de Envio de E-mail.")
 	@GetMapping(value = "/send/{id}")
 	public ResponseEntity<String> sendMails(@PathVariable Long id) {
 		try {
@@ -41,6 +45,7 @@ public class EmailReceiverController {
 		}
 	}
 	
+	@ApiOperation(value = "Utilizado para verificar a relação dos E-mails Listados a serem Enviados.")
 	@GetMapping(value = "/find/mails")
 	public ResponseEntity<EmailResponse> findAllMails() {
 		EmailResponse response = new EmailResponse();
