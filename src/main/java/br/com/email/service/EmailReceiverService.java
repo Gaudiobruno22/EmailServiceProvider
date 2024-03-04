@@ -16,6 +16,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 import br.com.email.exception.EmailNotFoundException;
+import br.com.email.exception.ValidationException;
 import br.com.email.helper.EmailValidator;
 import br.com.email.model.EmailReceiver;
 import br.com.email.repository.EmailReceiverRepository;
@@ -33,11 +34,10 @@ public class EmailReceiverService {
 	
 	public void sendEmail(Long codigo) {
 		EmailReceiver emailReceiver = new EmailReceiver();
-		logger.info("Iniciando envio do E-mail... " + emailReceiver.getId());
 		emailReceiver = searchEmail(codigo);
 		try {
-			
 			if(emailReceiver != null) {
+				logger.info("Iniciando envio do E-mail... " + emailReceiver.getId());
 				MimeMessage message = createMessage(emailReceiver);
 				mailSender.send(message);
 				logger.info("E-mail " + emailReceiver.getId() + " Enviado.");
@@ -103,24 +103,30 @@ public class EmailReceiverService {
 	}
 	
 	public void configureDestinyMail(MimeMessageHelper helper, EmailReceiver emailReceiver) {
-		boolean validMailDestiny = EmailValidator.isValidEmail(emailReceiver.getDestiny());
-		try {
-			if(validMailDestiny) {
-				helper.setTo(emailReceiver.getDestiny());
+		if(emailReceiver.getDestiny() != null) {
+			boolean validMailDestiny = EmailValidator.isValidEmail(emailReceiver.getDestiny());
+			try {
+				if(validMailDestiny) {
+					helper.setTo(emailReceiver.getDestiny());
+				}
+			} catch (Exception e) {
+				logger.error("Erro ao Configurar o Destinatário do E-mail " + emailReceiver.getId() + ". - " + e.getMessage());
 			}
-		} catch (Exception e) {
-			logger.error("Erro ao Configurar o Destinatário do E-mail " + emailReceiver.getId() + ". - " + e.getMessage());
+		}else {
+			throw new ValidationException("Destinatário dio E-mail não pode ser Vazio.");
 		}
 	}
 	
 	public void configureCopyMail(MimeMessageHelper helper, EmailReceiver emailReceiver) {
-		boolean validMailCopy = EmailValidator.isValidEmail(emailReceiver.getCopy());
-		try {
-			if(validMailCopy) {
-				helper.setCc(emailReceiver.getCopy());
+		if (emailReceiver.getCopy() != null) {
+			boolean validMailCopy = EmailValidator.isValidEmail(emailReceiver.getCopy());
+			try {
+				if(validMailCopy) {
+					helper.setCc(emailReceiver.getCopy());
+				}
+			}catch (Exception e) {
+				logger.error("Erro ao Configurar a Cópia do E-mail " + emailReceiver.getId() + ". - " + e.getMessage());
 			}
-		}catch (Exception e) {
-			logger.error("Erro ao Configurar a Cópia do E-mail " + emailReceiver.getId() + ". - " + e.getMessage());
 		}
 	}
 

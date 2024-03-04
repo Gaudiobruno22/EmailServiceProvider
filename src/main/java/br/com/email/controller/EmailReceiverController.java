@@ -1,5 +1,8 @@
 package br.com.email.controller;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.email.exception.EmailNotFoundException;
+import br.com.email.model.EmailReceiver;
+import br.com.email.response.EmailResponse;
 import br.com.email.service.EmailReceiverService;
 
 @RestController
@@ -25,7 +30,6 @@ public class EmailReceiverController {
 	@GetMapping(value = "/send/{id}")
 	public ResponseEntity<String> sendMails(@PathVariable Long id) {
 		try {
-			
 			emailService.sendEmail(id);
 			return ResponseEntity.ok("E-mail " + id + " Enviado.");
 		}catch (EmailNotFoundException e) {
@@ -37,5 +41,18 @@ public class EmailReceiverController {
 		}
 	}
 	
-	
+	@GetMapping(value = "/find/mails")
+	public ResponseEntity<EmailResponse> findAllMails() {
+		EmailResponse response = new EmailResponse();
+		List<EmailReceiver> list = new ArrayList<>();
+		try {
+			list = emailService.findEmails();
+			response.setList(list);
+			return ResponseEntity.ok(response);
+		}catch (Exception e) {
+			String error = "Erro ao Retornar E-mails." + e.getMessage();
+			response.setErrorMessage(error);
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+		}
+	}
 }
