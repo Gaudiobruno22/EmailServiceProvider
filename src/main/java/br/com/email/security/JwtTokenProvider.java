@@ -7,6 +7,8 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -38,6 +40,8 @@ public class JwtTokenProvider {
 	
 	Algorithm algorithm = null;
 	
+	private static final Logger logger = LoggerFactory.getLogger(JwtTokenProvider.class);
+	
 	@PostConstruct
 	protected void init () {
 		secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
@@ -45,6 +49,7 @@ public class JwtTokenProvider {
 	}
 	
 	public TokenDTO createAccessToken(String userName, List<String> roles) {
+		logger.info("Entrando no createAccessToken...");
 		Date now = new Date();
 		Date validity = new Date(now.getTime() + validityInMiliseconds);
 		var accessToken = getAccessToken(userName, roles, now, validity);
@@ -62,9 +67,11 @@ public class JwtTokenProvider {
 	}
 
 	private String getAccessToken(String userName, List<String> roles, Date now, Date validity) {
+		logger.info("Entrando getAccessToken....");
 		String issuerUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
 								.build()
 								.toUriString();
+		logger.info("Carregando isserUrl.: " + issuerUrl);
 		return JWT.create()
 				  .withClaim("roles", roles)
 				  .withIssuedAt(now)
