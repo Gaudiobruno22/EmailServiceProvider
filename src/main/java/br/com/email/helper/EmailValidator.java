@@ -15,12 +15,15 @@ public class EmailValidator {
 	public static boolean isValidEmail(String email) {
 		boolean isValid = false;
 		try {
-			if(email.isBlank()) throw new AddressException("E-mail Vazio.");
+			if(email.isBlank() || email == null) throw new AddressException("E-mail Vazio.");
 			InternetAddress internetAddress = new InternetAddress(email);
 			internetAddress.validate();
 			isValid = true;		
 		}catch (AddressException e) {
-			logger.error("E-mail " + email + " Não é Valido. " + e.getMessage());
+			logger.error(e.getMessage());
+		}
+		catch (NullPointerException e) {
+			logger.error(e.getMessage());
 		}
 		return isValid;
 	}
